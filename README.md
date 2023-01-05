@@ -34,7 +34,7 @@ go run ./entry create_superadmin
 3. After back-end is up and running, update back-end address on IOS app:
 ```EndPoints.swift -> kServerBase variable```
 
-
+4. Also in the root of the project you could find DB dump from my local DB: alpaca_db_demo.sql. You could use it on the server and then use my user credentials: fedorniakl@gmail.com/qweqweqwe.
 
 
 # Ribbit Reference Implementation (Backend)
