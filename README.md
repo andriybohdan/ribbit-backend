@@ -7,14 +7,16 @@ So, the steps that left:
 - Postgres credentials. HOST and PORT is the most important, user and db will be created with script. Also, superuser credentials will be needed.
 - Sendgrid. Need to add API_KEY to make emails work (locally it didn't work for some reason, so just print needed info into the console).
 - Plaid. Client_Id and Secret is needed. Easy to register and copy it for Sandbox. The rest should be like:
-```export PLAID_ENV="sandbox"
+```
+export PLAID_ENV="sandbox"
 export PLAID_PRODUCTS="auth"
-export PLAID_COUNTRY_CODES="US"```
+export PLAID_COUNTRY_CODES="US"
+```
 - Broker (Alpaca API). Need to generate BROKER_TOKEN using base64 basic auth. Use Alpaca Sandbox key:secret. And ruby irb: 
 ```Base64::encode64("key:secret")```
 Result will be like:
 ```BROKER_TOKEN=Basic encoded_token```
-To test the token you could make GET resuest to https://broker-api.sandbox.alpaca.markets/v1/assets with Header: Authorization: your_token.
+To test the token you could make GET resuest to https://broker-api.sandbox.alpaca.markets/v1/assets with Header: `Authorization: your_token.`
 - Looks like twilio and magic services are not obligatory.
 
 2. After .env file is ready, you could run the app. On the server may be better to use doker: ```docker compose up```. Didn't try. Or use next commends(works locally):
