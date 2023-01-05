@@ -1,3 +1,40 @@
+## Deploy to the server
+
+Changes that I made to the project related to the ssl and security. As described in instruction it is not working, so I swiched off security. For testing reasons it is not needed.
+So, the steps that left:
+
+1. The biggest challenge is to put all needed into .env file.
+- Postgres credentials. HOST and PORT is the most important, user and db will be created with script. Also, superuser credentials will be needed.
+- Sendgrid. Need to add API_KEY to make emails work (locally it didn't work for some reason, so just print needed info into the console).
+- Plaid. Client_Id and Secret is needed. Easy to register and copy it for Sandbox. The rest should be like:
+```export PLAID_ENV="sandbox"
+export PLAID_PRODUCTS="auth"
+export PLAID_COUNTRY_CODES="US"```
+- Broker (Alpaca API). Need to generate BROKER_TOKEN using base64 basic auth. Use Alpaca Sandbox key:secret. And ruby irb: 
+```Base64::encode64("key:secret")```
+Result will be like:
+```BROKER_TOKEN=Basic encoded_token```
+To test the token you could make GET resuest to https://broker-api.sandbox.alpaca.markets/v1/assets with Header: Authorization: your_token.
+- Looks like twilio and magic services are not obligatory.
+
+2. After .env file is ready, you could run the app. On the server may be better to use doker: ```docker compose up```. Didn't try. Or use next commends(works locally):
+- ```source .env``` (be awaire that you need to run this each time you change data inseide .env file)
+- ```go get -v ./...``` - get dependancies
+- ```go run ./entry/ generate_secret``` (copy the cli output of the command above and replace {JWT_SECRET} with it) ```export JWT_SECRET={JWT_SECRET}```
+- DB commands:
+```
+go run ./entry create_db
+go run ./entry create_schema
+go run ./entry create_superadmin
+```
+- ```go run ./entry/main.go``` to run the app
+
+3. After back-end is up and running, update back-end address on IOS app:
+```EndPoints.swift -> kServerBase variable```
+
+
+
+
 # Ribbit Reference Implementation (Backend)
 
 The reference implementation for the backend of a broker-dealer trading application with the Alpaca [Broker API](https://alpaca.markets/docs/broker/). The backend is implemented using Go. 
