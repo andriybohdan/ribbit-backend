@@ -55,6 +55,7 @@ var client = func() *plaid.Client {
 		HTTPClient:  &http.Client{},
 	}
 	client, err := plaid.NewClient(clientOptions)
+	fmt.Println("service CreateLinkToken client",client, err )
 	if err != nil {
 		panic(fmt.Errorf("unexpected error while initializing plaid client %w", err))
 	}
@@ -88,12 +89,12 @@ func (s *Service) CreateLinkToken(c context.Context, accountID string, name stri
 		User: &plaid.LinkTokenUser{
 			ClientUserID: accountID,
 		},
-		ClientName:   "Ribbit",
+		ClientName:   "user_good",
 		Products:     products,
 		CountryCodes: countryCodes,
 		Language:     "en",
 	}
-
+	fmt.Println("service CreateLinkToken",accountID, products, countryCodes )
 	resp, err := client.CreateLinkToken(configs)
 	if err != nil {
 		return nil, err

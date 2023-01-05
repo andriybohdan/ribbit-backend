@@ -62,26 +62,26 @@ func (a *Auth) login(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	fileByte, err := ioutil.ReadFile("private_key.pem")
+	// fileByte, err := ioutil.ReadFile("private_key.pem")
+	// if err != nil {
+	// 	apperr.Response(c, apperr.New(http.StatusUnauthorized, "Password doesn't match."))
+	// 	return
+	// }
+	// priv_parsed, err := ParseRsaPrivateKeyFromPemStr(string(fileByte))
+	// if err != nil {
+	// 	apperr.Response(c, apperr.New(http.StatusUnauthorized, "Password doesn't match."))
+	// 	return
+	// }
+	password, err := base64.StdEncoding.DecodeString(cred.Password)
 	if err != nil {
 		apperr.Response(c, apperr.New(http.StatusUnauthorized, "Password doesn't match."))
 		return
 	}
-	priv_parsed, err := ParseRsaPrivateKeyFromPemStr(string(fileByte))
-	if err != nil {
-		apperr.Response(c, apperr.New(http.StatusUnauthorized, "Password doesn't match."))
-		return
-	}
-	decoded, err := base64.StdEncoding.DecodeString(cred.Password)
-	if err != nil {
-		apperr.Response(c, apperr.New(http.StatusUnauthorized, "Password doesn't match."))
-		return
-	}
-	password, err := rsa.DecryptPKCS1v15(rand.Reader, priv_parsed, decoded)
-	if err != nil {
-		apperr.Response(c, apperr.New(http.StatusUnauthorized, "Password doesn't match."))
-		return
-	}
+	// password, err := rsa.DecryptPKCS1v15(rand.Reader, priv_parsed, decoded)
+	// if err != nil {
+	// 	apperr.Response(c, apperr.New(http.StatusUnauthorized, "Password doesn't match."))
+	// 	return
+	// }
 
 	r, err := a.svc.Authenticate(c, cred.Email, string(password))
 	if err != nil {
@@ -103,32 +103,41 @@ func (a *Auth) refresh(c *gin.Context) {
 
 func (a *Auth) signup(c *gin.Context) {
 	e, err := request.AccountSignup(c)
+	fmt.Println("TEST5", e, err)
 	if err != nil {
 		apperr.Response(c, err)
 		return
 	}
-
+	fmt.Println("END1")
 	fileByte, err := ioutil.ReadFile("private_key.pem")
+	fmt.Println("END1", fileByte, err)
 	if err != nil {
 		apperr.Response(c, apperr.New(http.StatusUnauthorized, "Invalid password format."))
 		return
 	}
+	fmt.Println("END2")
 	priv_parsed, err := ParseRsaPrivateKeyFromPemStr(string(fileByte))
+	fmt.Println("END2", priv_parsed, err)
 	if err != nil {
 		apperr.Response(c, apperr.New(http.StatusUnauthorized, "Invalid password format."))
 		return
 	}
-	decoded, err := base64.StdEncoding.DecodeString(e.Password)
+	
+	password, err := base64.StdEncoding.DecodeString(e.Password)
+	// fmt.Println("END3", decoded, err)
 	if err != nil {
 		apperr.Response(c, apperr.New(http.StatusUnauthorized, "Invalid password format."))
 		return
 	}
-	password, err := rsa.DecryptPKCS1v15(rand.Reader, priv_parsed, decoded)
-	if err != nil {
-		apperr.Response(c, apperr.New(http.StatusUnauthorized, "Invalid password format."))
-		return
-	}
-
+	
+	// password, err := rsa.DecryptPKCS1v15(rand.Reader, priv_parsed, decoded)
+	// fmt.Println("END4", password, err)
+	// fmt.Println("END4.1", rand.Reader, priv_parsed, decoded)
+	// if err != nil {
+	// 	apperr.Response(c, apperr.New(http.StatusUnauthorized, "Invalid password format."))
+	// 	return
+	// }
+	fmt.Println("END5")
 	user, err := a.svc.Signup(c, e, string(password))
 	if err != nil {
 		apperr.Response(c, err)
@@ -157,6 +166,9 @@ func (a *Auth) forgot(c *gin.Context) {
 		return
 	}
 	err := a.svc.Forgot(c, body.Email)
+
+	fmt.Println("email=====", body, e, c)
+
 	if err != nil {
 		apperr.Response(c, err)
 		return

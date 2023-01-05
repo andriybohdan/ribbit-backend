@@ -4,6 +4,7 @@ import (
 	"github.com/alpacahq/ribbit-backend/apperr"
 
 	"github.com/gin-gonic/gin"
+	"fmt"
 )
 
 // EmailSignup contains the user signup request
@@ -15,10 +16,14 @@ type EmailSignup struct {
 // AccountSignup validates user signup request
 func AccountSignup(c *gin.Context) (*EmailSignup, error) {
 	var r EmailSignup
+	fmt.Println("TEST1")
 	if err := c.ShouldBindJSON(&r); err != nil {
 		apperr.Response(c, err)
+		fmt.Println("TEST2")
+
 		return nil, err
 	}
+	fmt.Println("TEST3", c.ShouldBindJSON(&r), &r)
 	return &r, nil
 }
 

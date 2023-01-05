@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"fmt"	
 
 	"github.com/alpacahq/ribbit-backend/apperr"
 	"github.com/alpacahq/ribbit-backend/repository/account"
@@ -34,13 +35,15 @@ type Plaid struct {
 func (a *Plaid) createLinkToken(c *gin.Context) {
 	id, _ := c.Get("id")
 	user := a.acc.GetProfile(c, id.(int))
-
 	name := user.FirstName + " " + user.LastName
+	fmt.Println("createLinkToken1", user, user.AccountID, name, c)
+
 	linkToken, err := a.svc.CreateLinkToken(c, user.AccountID, name)
 	if err != nil {
 		apperr.Response(c, err)
 		return
 	}
+	fmt.Println("createLinkToken2", linkToken, err)
 
 	c.JSON(http.StatusOK, linkToken)
 }

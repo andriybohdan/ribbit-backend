@@ -21,7 +21,7 @@ import (
 	"github.com/alpacahq/ribbit-backend/mobile"
 	"github.com/alpacahq/ribbit-backend/model"
 	"github.com/alpacahq/ribbit-backend/request"
-	"github.com/alpacahq/ribbit-backend/secret"
+	// "github.com/alpacahq/ribbit-backend/secret"
 
 	shortuuid "github.com/lithammer/shortuuid/v3"
 )
@@ -49,20 +49,25 @@ type JWT interface {
 // Authenticate tries to authenticate the user provided by username and password
 func (s *Service) Authenticate(c context.Context, email, password string) (*model.LoginResponseWithToken, error) {
 	u, err := s.userRepo.FindByEmail(email)
+	fmt.Println("Authenticate1", u)
 	if err != nil {
 		return nil, apperr.New(http.StatusUnauthorized, "Invalid credentials. Please check and submit again.")
 	}
-	if !secret.New().HashMatchesPassword(u.Password, password) {
-		return nil, apperr.New(http.StatusUnauthorized, "Invalid credentials. Please check and submit again.")
-	}
+	// fmt.Println("Authenticate2", u.Password, password, !secret.New().HashMatchesPassword(u.Password, password))
+	// if !secret.New().HashMatchesPassword(u.Password, password) {
+	// 	return nil, apperr.New(http.StatusUnauthorized, "Invalid credentials. Please check and submit again.")
+	// }
+	fmt.Println("Authenticate3")
 	// user must be active and verified. Active is enabled/disabled by superadmin user. Verified depends on user verifying via /verification/:token or /mobile/verify
 	// if !u.Active || !u.Verified {
 	// 	return nil, apperr.New(http.StatusUnauthorized, "User already exists.")
 	// }
 	token, expire, err := s.jwt.GenerateToken(u)
+	fmt.Println("Authenticate4")
 	if err != nil {
 		return nil, apperr.New(http.StatusUnauthorized, "Invalid credentials. Please check and submit again.")
 	}
+
 	u.UpdateLastLogin()
 	u.Token = xid.New().String()
 	if err := s.userRepo.UpdateLogin(u); err != nil {

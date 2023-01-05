@@ -2,7 +2,7 @@ package request
 
 import (
 	"net/http"
-
+	"fmt"
 	apperr "github.com/alpacahq/ribbit-backend/apperr"
 	model "github.com/alpacahq/ribbit-backend/model"
 
@@ -56,6 +56,7 @@ type RegisterAdmin struct {
 // AccountCreate validates account creation request
 func AccountCreate(c *gin.Context) (*RegisterAdmin, error) {
 	var r RegisterAdmin
+	fmt.Println("AccountCreate", r)
 	if err := c.ShouldBindJSON(&r); err != nil {
 		apperr.Response(c, err)
 		return nil, err
